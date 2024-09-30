@@ -11,17 +11,10 @@ download_all_models()
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {
-    "origins": ["https://flight-delay-predictor.vercel.app", "http://localhost:3000"],
+    "origins": ["https://flight-delay-predictor.vercel.app", "http://localhost:3000", "*"],
     "methods": ["GET", "POST", "OPTIONS"],
     "allow_headers": ["Content-Type", "Authorization"]
 }})
-
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', 'https://flight-delay-predictor.vercel.app')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
-    return response
 
 # Load the models
 regression_model = joblib.load('regression_model.joblib')
@@ -39,6 +32,14 @@ def get_season(month):
         return 'Summer'
     else:
         return 'Fall'
+    
+
+@app.route('/check', methods=['get'])
+def test():
+    return jsonify({
+        'status': "works nigga",
+    })
+    
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
